@@ -1,0 +1,28 @@
+series: focal
+applications:
+  microk8s:
+    charm: microk8s
+    channel: stable
+    revision: 22
+    num_units: 1
+    to:
+    - "0"
+    options:
+      addons: storage dns:10.245.160.2
+      containerd_env: |+
+        # This file is managed by Juju. Manual changes may be lost at any time.
+        # Configure limits for locked memory and maximum number of open files
+        ulimit -n 65536 || true
+        ulimit -l 16384 || true
+        # Configure a proxy for containerd
+        HTTP_PROXY=http://squid.internal:3128
+        HTTPS_PROXY=http://squid.internal:3128
+        NO_PROXY=10.0.0.0/8,127.0.0.1,192.168.0.0/16,172.16.0.0/16
+        https_proxy=http://squid.internal:3128
+        http_proxy=http://squid.internal:3128
+        no_proxy=10.0.0.0/8,192.168.0.0/16,127.0.0.1,172.16.0.0/16
+
+    constraints: arch=amd64 cpu-cores=8 mem=16384
+machines:
+  "0":
+    constraints: arch=amd64 cpu-cores=8 mem=16384
